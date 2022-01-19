@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.env
+src/config/key/**/*.key
+.nyc_output/
+docker/keydb.conf
+docker/data/
+.pnpm-debug.log
+report.tap

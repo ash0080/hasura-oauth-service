@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  keydb:
+    image: eqalpha/keydb:alpine
+    container_name: keydb
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - ./keydb.conf:/etc/keydb/keydb.conf
+      - ./data:/data
