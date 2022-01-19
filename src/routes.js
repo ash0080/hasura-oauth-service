@@ -24,7 +24,7 @@ module.exports = (fastify, opts, done) => {
   //  return 'ok'
   //})
   fastify.get('/', async (req, res) => {
-    fastify.log.info('~~~~~~~~~~~~~~~~~~~~~')
+    //fastify.log.info('~~~~~~~~~~~~~~~~~~~~~')
     //console.log(req.ip)
     //console.log(req.headers['user-agent'])
     //console.log(req.headers['accept-language'])
@@ -44,7 +44,7 @@ module.exports = (fastify, opts, done) => {
     //  fastify.log.error(err)
     //}
     //fastify.log.warn(fastify.github.signin())
-    return '💖 Hello World 💖'
+    return 'ok'
   })
 
   //fastify.inject({
