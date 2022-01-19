@@ -9,7 +9,7 @@ implementation of registration also involves email/SMS verification, etc., which
 1.0.0 - A full-featured oauth service used to extend [HASURA]()
 
 ## Architecture
-![](../hasura-auth/image/architecture.png)
+![](image/architecture.png)
 
 ## Features
 
