@@ -14,6 +14,7 @@ const {
 const prepareMetadata = require('./controllers/metadata')
 const mountCronJobs = require('./controllers/cron')
 const Redis = require('ioredis')
+const delay = require('delay')
 //const {token} = require('./config/redis')
 const tokenRedis = new Redis(process.env.REDIS_URL, {db: 0})
 const rateRedis = new Redis(process.env.REDIS_URL, {
@@ -21,41 +22,67 @@ const rateRedis = new Redis(process.env.REDIS_URL, {
   maxRetriesPerRequest: 1, db: 1,
 })
 
-function buildFastify() {
-  const app = require('fastify')({
-                                   trustProxy           : true,
-                                   logger               : process.env.LOG_LEVEL ? {
-                                     logLevel   : process.env.LOG_LEVEL,
-                                     prettyPrint: true,
-                                     prettifier,
-                                   } : null,
-                                   disableRequestLogging: true,
-                                 })
-    .register(require('fastify-redis'), {client: tokenRedis, namespace: 'token'})
-    .register(require('fastify-redis'), {client: rateRedis, namespace: 'rate'})
-    .register(require('fastify-rate-limit'), require('./config/ratelimit')(rateRedis))
-    .register(fastifyCron)
-    .register(fastifyRequestLogger)
-    .register(require('fastify-sensible'))
-    .register(fastifyHasura, require('./config/hasura'))
-    .register(session, require('./config/session'))
-    .register(fastifyJwt, require('./config/jwt'))
-    .addHook('onRequest', (req, res, next) => {
-      Object.defineProperty(req.session, 'grant', {
-        get: () => req.session.get('grant'), set: (value) => req.session.set('grant', value),
-      })
-      next()
-    })
-    .register(grant(require('./config/grant.js')))
-    .register(require('./routes'))
-  return app
+const buildFastify = async () => {
+  try {
+    const app = require('fastify')({
+                                     trustProxy           : true,
+                                     logger               : process.env.LOG_LEVEL ? {
+                                       logLevel   : process.env.LOG_LEVEL,
+                                       prettyPrint: true,
+                                       prettifier,
+                                     } : null,
+                                     disableRequestLogging: true,
+                                   })
+    await app.register(require('fastify-rate-limit'), require('./config/ratelimit')(rateRedis))
+    app.register(require('fastify-redis'), {client: tokenRedis, namespace: 'token'})
+       .register(require('fastify-redis'), {client: rateRedis, namespace: 'rate'})
+       .register(fastifyCron)
+       .register(fastifyRequestLogger)
+       .register(require('fastify-sensible'))
+       .register(fastifyHasura, require('./config/hasura'))
+       .register(session, require('./config/session'))
+       .register(fastifyJwt, require('./config/jwt'))
+       .addHook('onRequest', (req, res, next) => {
+         Object.defineProperty(req.session, 'grant', {
+           get: () => req.session.get('grant'), set: (value) => req.session.set('grant', value),
+         })
+         next()
+       })
+       .setNotFoundHandler({preHandler: app.rateLimit()}, (req, res) => {
+         res.code(404).send('not found')
+       })
+       .register(grant(require('./config/grant.js')))
+       .register(require('./routes'))
+
+    return app
+  } catch (err) {
+    console.error(err)
+    process.exit(1)
+  }
 }
 
-const app = buildFastify()
-
 const start = async () => {
-  await app.ready()
+  const app = await buildFastify()
   let hasPrepared = true
+  let hasuraIsReady = false
+  let retryCnt = 0
+  // TODO: add a health check and wait hasura prepared
+  // TODO: update twitter oauth 2.0
+  while (!hasuraIsReady && retryCnt < 10) {
+    retryCnt++
+    try {
+      hasuraIsReady = await app.hasura.healthz()
+    } catch (err) {
+      console.error(`Waiting for hasura to be ready, tried ${retryCnt} time, try again after 10 seconds...`)
+    }
+    if (!hasuraIsReady) {
+      await delay(10 * 1000)
+    }
+  }
+  if (!hasuraIsReady) {
+    throw new Error('Hasura is not ready, terminate operation ☠️')
+    process.exit(1)
+  }
   try {
     const resp = await getAuthVersion(app.hasura.schema)
     const version = resp?.result?.[1]?.[0]
@@ -103,5 +130,4 @@ const start = async () => {
 }
 
 start()
-module.exports = app
-exports.buildFastify = buildFastify
+module.exports = buildFastify
