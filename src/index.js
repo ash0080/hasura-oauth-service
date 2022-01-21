@@ -25,6 +25,8 @@ const rateRedis = new Redis(process.env.REDIS_URL, {
 const buildFastify = async () => {
   try {
     const app = require('fastify')({
+                                     //http2                : true,
+                                     //https                : require('./config/https'),
                                      trustProxy           : true,
                                      logger               : process.env.LOG_LEVEL ? {
                                        logLevel   : process.env.LOG_LEVEL,
