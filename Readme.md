@@ -104,10 +104,13 @@ at 0.0.0.0:${port} DONE!
    For now, Yes, you can. But in the future I may add some features unique to keydb, which may only be available in the Redis enterprise version
 
 ## Todo
-
-1. Rewrite with typescript;
-2. Add a function to limit the number of devices for multi-device login;
-3. More Tests;
+- [x] Handle 404
+- [x] Health check if hasura is ready;
+- [x] Update Twitter workflow to OAuth2;
+- [x] ~~Suport https;~~ Withdrawn! using a reverse proxy is better;
+- [ ] Rewrite with typescript;
+- [ ] Add a function to limit the number of devices for multi-device login;
+- [ ] More Tests;
 
 ## Thanks
 Thanks all people who helped develop this project, especially,
