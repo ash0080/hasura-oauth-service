@@ -28,7 +28,6 @@ const {parse} = require('dotenv')
 
 exports.signin = (app) => async (req, res) => {
   const payload = req?.session?.grant || JSON.parse(req?.raw?._lightMyRequest?.payload)
-  // console.dir(payload)
   // console.dir(payload.provider)
   if (!payload) {
     throw app.httpErrors.failedDependency()
@@ -36,6 +35,7 @@ exports.signin = (app) => async (req, res) => {
   const provider = payload.provider
   const response = payload.response
   const allowedProviders = await providerEnumValues(app.hasura.graphql)
+  console.dir(allowedProviders)
   //console.log(allowedProviders, provider)
   if (!allowedProviders.includes(provider)) {
     throw app.httpErrors.notAcceptable('This provider it not listed in database')
@@ -82,7 +82,7 @@ exports.signin = (app) => async (req, res) => {
     }
     // console.log('~~~~~~~~~~~~~~~~')
 
-    // console.log(userData)
+     console.log(userData)
     // STEP2: generate refresh token
     const key = nanoid(16)
     const fingerprint = genFingerPrint(req)

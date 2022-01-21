@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS auth.role (
 
 -- data
 INSERT INTO auth.provider
-VALUES ('github'),('google'),('facebook'),('twitter')
+VALUES ('github'),('google'),('facebook'),('twitter2')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO auth.role

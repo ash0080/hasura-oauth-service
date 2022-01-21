@@ -51,20 +51,27 @@ class googleMapper
   }
 }
 
-class twitterMapper
+class twitter2Mapper
   extends defaultMapper {
   constructor(response) {super(response)}
 
-  get provider_user_id() {return `${this.r?.raw?.user_id || ''}`}
+  get provider_user_id() {return `${this.r?.profile?.data?.id || ''}`}
 
-  get nickname() {return `${this.r?.raw?.screen_name || ''}`}
+  get nickname() {return `${this.r?.profile?.data?.name || ''}`}
+
+  get avatar_url() {return `${this.r?.profile?.data?.profile_image_url || ''}`}
+
+  get bio() {return `${this.r?.profile?.data?.description || ''}`}
 }
 
 const defaultConfig = {
   defaults: {
     origin   : process.env.SERVICE_ORIGIN,
     prefix   : process.env.ROUTE_PREFIX,
-    transport: 'session', state: true, nonce: true,
+    transport: 'session',
+    state    : true,
+    pkce     : true,
+    nonce    : true,
     callback : '/token',
     mapper   : (r) => new defaultMapper(r),
   },
@@ -100,11 +107,17 @@ const providersConfit = {
     scope   : ['public_profile'],
     response: ['tokens', 'profile'],
   },
-  twitter : {
-    key     : process.env.TWITTER_CLIENT_ID,
-    secret  : process.env.TWITTER_CLIENT_SECRET,
-    response: ['tokens', 'raw'],
-    mapper  : (r) => new twitterMapper(r),
+  twitter2: {
+    key        : process.env.TWITTER_CLIENT_ID,
+    secret     : process.env.TWITTER_CLIENT_SECRET,
+    state      : true,
+    scope      : [
+      'users.read',
+      'tweet.read',
+    ],
+    response   : ['tokens', 'profile'],
+    profile_url: 'https://api.twitter.com/2/users/me?user.fields=id,name,username,profile_image_url,description',
+    mapper     : (r) => new twitter2Mapper(r),
   },
   //wechat  : {
   //  key     : process.env.WECHAT_CLIENT_ID,

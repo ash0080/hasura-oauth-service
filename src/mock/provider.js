@@ -86,21 +86,21 @@ exports.facebook = {
   },
 }
 exports.twitter = {
-  provider: 'twitter',
-  request : {
-    oauth_token             : 'lB_xKgAAAAABYLYNAAABfmewqEU',
-    oauth_token_secret      : 'WJ5aVyOthLbyAWHEMYn6bHU50g1bU0mM',
-    oauth_callback_confirmed: 'true',
-  },
+  provider: 'twitter2',
+  state: 'ac2e94c218f74087724219f496c57a0dde17a93d',
+  nonce: '5d15bc608a411aa1303d8f01fb12498d2e057d8a',
+  code_verifier: 'c0713b0b687e7209699acd2b45ebbb697c18bf5e3d996f3df8e21b0586f7414a909b07ae6cc11f5d',
   response: {
-    access_token : '95647441-ZJTXWVn23M8FJfSyNKS7GdlKIlKyqkLXQTBKH5Fwu',
-    access_secret: 'suFNYhvny894LDj58mCvhT4etBwlC4AAjAU5s0Ps1McBt',
-    raw          : {
-      oauth_token       : '95647441-ZJTXWVn23M8FJfSyNKS7GdlKIlKyqkLXQTBKH5Fwu',
-      oauth_token_secret: 'suFNYhvny894LDj58mCvhT4etBwlC4AAjAU5s0Ps1McBt',
-      user_id           : '95647441',
-      screen_name       : 'ElvisQuaintArts',
-    },
-  },
+    access_token: 'd2tKU0RtWEJrakFzU1lhckdEanp2bGdScWphcEtydFl3TURFVm9naG9NWU9VOjE2NDI3MzU2MzUwNzI6MToxOmF0OjE',
+    profile: {
+      data: {
+        description: '🎭A7BVPtj4G3uRk0c77Sf/3KA2lOmMPdXX4U8WjvHOu5Xb8🎭',
+        id: '95647441',
+        username: 'ElvisQuaintArts',
+        profile_image_url: 'https://pbs.twimg.com/profile_images/569283920/_____2009-12-11___03.27.57_normal.png',
+        name: '圈爷'
+      }
+    }
+  }
 }
 
