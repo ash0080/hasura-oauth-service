@@ -1,0 +1,9 @@
+#<your-domain.com> {
+#  proxy / graphql-engine:8080 {
+#  websocket
+#  }
+#}
+
+127.0.0.1:443 {
+  reverse_proxy 0.0.0.0:3009
+}
